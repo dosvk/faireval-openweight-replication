@@ -1,0 +1,99 @@
+# ReScience C submission metadata for paper10.
+#
+# All owner-supplied fields are filled as of 2026-10-11 per the coordinator's ruling: contact
+# email, ORCID, and the code URL. The Zenodo DOI is obtained on acceptance, as decided.
+#
+# NO TITLE PREFIX. The ReScience template's own metadata.yaml states the rule: "[Re]" for a
+# successful replication, "[¬Re]" for a failed one, and "for other article types, no instruction".
+# This replication is neither: its pre-registered protocol proved non-executable on the target
+# systems, so none of the three registered hypotheses is evaluable as registered. [Re] would claim
+# a reproduction that was never tested, and [¬Re] would have the journal declare the original
+# non-replicable on no evidence. A question for the editors is drafted and awaiting the owner.
+
+title: "Does positional bias in LLM-as-judge evaluation, and its calibration fix, hold for open-weight judges? A pre-registered replication halted by its own determinism control"
+
+authors:
+  - name: Veerendra Kumar Sunkavalli
+    orcid: 0009-0005-2759-1642
+    email: veeru.svk@gmail.com
+    affiliations: 1,*
+
+affiliations:
+  - code: 1
+    name: Independent Researcher
+    address: ""
+
+# List of keywords
+keywords: LLM-as-judge, positional bias, pre-registration, replication, open-weight models, reproducibility
+
+# Code URL and DOI/SWH. The URL is mandatory for a replication; the DOI comes after acceptance.
+# The owner mints the Zenodo DOI on acceptance with the editor and pre-mints nothing.
+code:
+  - url: https://github.com/dosvk/faireval-openweight-replication
+    doi:
+    swh:
+
+# Data URL and DOI. The benchmark inputs are third-party and carry no licence, so this study
+# redistributes none of them; see the deviations register. Our own released results are redacted
+# of verbatim upstream spans and ship in the code repository.
+data:
+  - url:
+    doi:
+
+# Information about the original article that has been replicated
+replication:
+  - cite: >
+      Peiyi Wang, Lei Li, Liang Chen, Zefan Cai, Dawei Zhu, Binghuai Lin, Yunbo Cao, Lingpeng Kong,
+      Qi Liu, Tianyu Liu, Zhifang Sui. Large Language Models are not Fair Evaluators.
+      Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics
+      (Volume 1: Long Papers), 2024, pages 9440-9450.
+    bib: wang2024
+    url: https://aclanthology.org/2024.acl-long.511/
+    doi: 10.18653/v1/2024.acl-long.511
+
+# Don't forget to surround abstract with double quotes
+abstract: "Wang et al. (2024) report that large language models used as pairwise evaluators reverse their verdicts when the two candidate answers are swapped, and propose three calibration strategies, one of which this study replicates. We pre-registered a judge-substitution replication on three open-weight instruction-tuned models served locally. The registered protocol could not be executed: two of the three judges failed a pre-registered temperature-0 determinism control, which halted their temperature-0 arms as the registration required, and the third judge's output defeated the registered parser on 313 of 320 records. None of the three pre-registered hypotheses is therefore evaluable as registered. This is not an assertion that the original finding is false; it reports that a pre-registered protocol proved non-executable on these systems. We report the surviving temperature-1 arms descriptively, with every departure from the plan recorded in a dated register released with the article."
+
+# Bibliography file (yours)
+bibliography: bibliography.bib
+
+# Type of the article: Editorial, Letter, or Replication
+type: Replication
+
+# Scientific domain of the article
+domain: Natural Language Processing
+
+# Coding language (main one only if several)
+language: Python
+
+# To be filled by the author(s) after acceptance
+# -----------------------------------------------------------------------------
+review:
+  - url:
+
+contributors:
+  - name:
+    orcid:
+    role: editor
+  - name:
+    orcid:
+    role: reviewer
+  - name:
+    orcid:
+    role: reviewer
+
+dates:
+  - received:
+  - accepted:
+  - published:
+
+article:
+  - number:
+    doi:
+    url:
+
+journal:
+  - name: "ReScience C"
+    issn: "2430-3658"
+    volume:
+    issue:

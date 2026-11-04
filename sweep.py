@@ -60,7 +60,7 @@ BANNED = [
 # A duplicated sentence survived four literal-match attempts because line breaks fell inside the
     # phrases being matched. The sweep normalises whitespace before matching, so it catches what
     # hand-written greps miss - which is the whole argument for putting checks here rather than ad hoc.
-    ("duplicated venue sentence",
+("duplicated venue sentence",
      r"(author guidelines are the source for the venue requirements we follow).{0,200}\1"),
     ("false kappa-compliance claim",
      r"alongside the label marginals and PABAK, never as a bare number\."),

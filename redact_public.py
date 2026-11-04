@@ -34,7 +34,18 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-INPUTS = os.path.expanduser("~/.cache/p10-inputs/FairEval")
+# Reviewer 1 (#142, 2026-11-04) could not run this without editing the module: the input
+# root was hard-coded. It is now configurable, default unchanged so existing invocations work.
+#   --inputs <path>   on the command line, or   P10_INPUTS=<path>   in the environment
+def _input_root():
+    import sys as _s
+    if "--inputs" in _s.argv:
+        i = _s.argv.index("--inputs")
+        if i + 1 < len(_s.argv):
+            return os.path.abspath(os.path.expanduser(_s.argv[i + 1]))
+    return os.path.abspath(os.path.expanduser(
+        os.environ.get("P10_INPUTS", "~/.cache/p10-inputs/FairEval")))
+INPUTS = _input_root()
 OUTDIR = os.path.join(HERE, "results-public")
 THRESHOLD = 8                      # the released threshold; 12 is reported for comparison
 PLACEHOLDER = "[upstream span redacted, sha256:%s]"
@@ -211,6 +222,42 @@ def selftest():
         got = k > 0
         print("  %-46s %s" % (lbl, "PASS" if got == want_redacted else "FAIL"))
         ok &= (got == want_redacted)
+    # D-P10-91w: the planted-hit test the reply mentions is now part of --selftest, so the claim
+    # "it fails on a file that does carry upstream text" is checked on every run rather than once.
+    import json as _j, glob as _g, subprocess as _sp, tempfile as _tf
+    planted = None
+    for f in _g.glob(os.path.join(HERE, "results", "verdicts_*.json")):
+        d = _j.load(open(f))
+        if "_redaction" in d:
+            continue
+        g8, c8 = build_index(upstream_texts(), 8)
+        for v in d["verdicts"]:
+            for smp in v.get("samples", []):
+                if redact(smp.get("raw", ""), g8, c8, 8)[1] >= 1:
+                    planted = smp["raw"]; break
+            if planted: break
+        if planted: break
+    if planted:
+        tmp = os.path.join(_tf.mkdtemp(), "planted.txt")
+        open(tmp, "w").write(planted)
+        r = _sp.run([sys.executable, os.path.abspath(__file__), "--scan", tmp],
+                    capture_output=True, text=True)
+        fired = r.returncode == 1
+        print("  %-46s %s" % ("--scan fires on a planted upstream span", "PASS" if fired else "FAIL"))
+        ok &= fired
+    else:
+        print("  %-46s SKIP (no unredacted sample available)" % "--scan planted-hit test")
+    r0 = _sp.run([sys.executable, os.path.abspath(__file__), "--scan"], capture_output=True, text=True)
+    refused = r0.returncode == 2
+    print("  %-46s %s" % ("--scan refuses an empty file list", "PASS" if refused else "FAIL"))
+    ok &= refused
+    _env = dict(os.environ); _env["P10_INPUTS"] = "/nonexistent-corpus"
+    r1 = _sp.run([sys.executable, os.path.abspath(__file__), "--scan", os.path.abspath(__file__)],
+                 capture_output=True, text=True, env=_env)
+    refused2 = r1.returncode == 2
+    print("  %-46s %s" % ("--scan refuses an empty upstream corpus", "PASS" if refused2 else "FAIL"))
+    ok &= refused2
+
     # the placeholder must carry a hash and must not leak the span
     new, _ = redact(texts[0] + " tail", grams, corpus, 8)
     leaked = "quick brown fox jumps over the lazy dog" in new
@@ -225,6 +272,50 @@ def selftest():
 if __name__ == "__main__":
     if "--selftest" in sys.argv:
         raise SystemExit(selftest())
+    if "--scan" in sys.argv:
+        # Reviewer 1 (#142) asked us to show, not assert, that a released file carries no upstream
+        # text. Scan any file or directory and report spans at both thresholds. Exit 1 on any hit.
+        import glob as _g
+        args = sys.argv[sys.argv.index("--scan") + 1:]
+        paths = []
+        for a in args:
+            if os.path.isdir(a):
+                paths += [p for p in _g.glob(os.path.join(a, "**", "*"), recursive=True)
+                          if os.path.isfile(p)]
+            else:
+                paths += _g.glob(a)
+        if not paths:
+            # D-P10-91w: with no arguments this printed "scanning 0 file(s)" and then CLEAN, exit 0.
+            # A scan of nothing must never report clean: a false zero from a safety check is worse
+            # than no check, because it is indistinguishable from a real pass.
+            print("REFUSED: no files given. A scan of zero files is not a pass.")
+            print("usage: redact_public.py --scan <path> [path ...]")
+            raise SystemExit(2)
+        texts = upstream_texts()
+        # D-P10-93w M6: with no upstream corpus loaded this reported CLEAN, exit 0, which is
+        # meaningless - every comparison is against an empty set. A safety check must refuse when
+        # EITHER side is empty: zero files to scan, or zero texts to scan against.
+        if not texts:
+            print("REFUSED: 0 upstream texts loaded from %s" % INPUTS)
+            print("A scan against an empty corpus is not a pass. Pass --inputs <path> or set")
+            print("P10_INPUTS to a verified FairEval checkout; see the README.")
+            raise SystemExit(2)
+        bad = 0
+        print("scanning %d file(s) against %d upstream text(s)" % (len(paths), len(texts)))
+        for th in (8, 12):
+            grams, corpus = build_index(texts, th)
+            for p in paths:
+                try:
+                    blob = open(p, errors="replace").read()
+                except Exception as e:
+                    print("  %-56s UNREADABLE (%s)" % (p, e)); continue
+                _, n = redact(blob, grams, corpus, th)
+                if n:
+                    bad += 1
+                print("  >=%2d words  %-50s %d span(s)" % (th, os.path.basename(p), n))
+        print("\n%s" % ("CLEAN: no upstream spans at either threshold" if not bad
+                         else "HITS: %d file/threshold combinations carry upstream text" % bad))
+        raise SystemExit(1 if bad else 0)
     print("upstream texts: %d" % len(upstream_texts()))
     for th in (8, 12):
         per = count_affected(th)

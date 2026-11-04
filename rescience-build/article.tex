@@ -1,0 +1,30 @@
+\documentclass{rescience}
+
+% Shims for the pandoc-converted body: the ReScience template expects hand-written LaTeX
+% and defines none of these, while pandoc's standalone preamble normally would.
+\usepackage{xurl}
+% LOCAL: a long unbreakable URL in a narrow bibliography column was being letterspaced by
+% justification ('https : / / github . com / ...'). Give TeX slack before it stretches spaces.
+\setlength{\emergencystretch}{3em}   % LOCAL: biblatex letterspaced a long URL ('https : / / github . com / ...');
+                    % xurl allows breaks at any character so it sets normally
+\usepackage{booktabs}
+\usepackage{longtable}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\real}[1]{#1}
+% pandoc emits \def\LTcaptype{none} for uncaptioned longtables; the caption package that
+% rescience.cls loads then looks for a counter of that name, so define a dummy one.
+\newcounter{none}
+
+\begin{document}
+
+
+\input{header.tex}
+\input{content.tex}
+
+\hypersetup{linkcolor=black,urlcolor=darkgray}
+\renewcommand\emph[1]{{\bfseries #1}}
+
+\setlength\bibitemsep{0pt}
+\printbibliography
+
+\end{document}

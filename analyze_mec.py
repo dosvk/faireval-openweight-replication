@@ -21,7 +21,18 @@ _spec = importlib.util.spec_from_file_location("rr", os.path.join(HERE, "run_rep
 rr = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rr)
 
-ROOT = os.path.expanduser("~/.cache/p10-inputs/FairEval")
+# Reviewer 1 (#142, 2026-11-04) could not run this without editing the module: the input
+# root was hard-coded. It is now configurable, default unchanged so existing invocations work.
+#   --inputs <path>   on the command line, or   P10_INPUTS=<path>   in the environment
+def _input_root():
+    import sys as _s
+    if "--inputs" in _s.argv:
+        i = _s.argv.index("--inputs")
+        if i + 1 < len(_s.argv):
+            return os.path.abspath(os.path.expanduser(_s.argv[i + 1]))
+    return os.path.abspath(os.path.expanduser(
+        os.environ.get("P10_INPUTS", "~/.cache/p10-inputs/FairEval")))
+ROOT = _input_root()
 # human label -> verdict frame. The close pair is (gpt35, vicuna-13b) = (A, B).
 LAB = {"CHATGPT": "A", "VICUNA13B": "B", "TIE": "TIE"}
 

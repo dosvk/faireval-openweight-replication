@@ -5,7 +5,8 @@ The original repository https://github.com/i-Eval/FairEval carries NO licence (G
 ships only our own code, our regenerated candidate answers and our own judge verdicts. The
 original question set, candidate answers and the 80 human win/tie/lose labels are FETCHED BY THE
 READER at run time from the original public repository, pinned by commit and verified by checksum.
-Pattern follows paper6-c7/artifact/rehydrate_asap.py (D-P10-02, 2026-10-09).
+Verify-only rehydration: checks SHA-256 and byte length of a pinned third-party checkout; it
+does not fetch. (2026-10-09.)
 
 1. Clone the pinned commit:
      git clone https://github.com/i-Eval/FairEval.git

@@ -5,7 +5,7 @@ timestamps do and do not evidence
 so that no time is lost after it; it makes NO judge calls unless explicitly told to run an arm, and
 the controls that need no inference can be verified now.
 
-DO NOT RUN THE ARMS UNTIL THE PRE-REGISTRATION IS REGISTERED. The gate is a kmvee-only public
+DO NOT RUN THE ARMS UNTIL THE PRE-REGISTRATION IS REGISTERED. The gate is an owner-only public
 action. `--arms` refuses to run unless --osf-doi is supplied, which is the mechanical expression of
 that gate rather than a note asking someone to remember it.
 

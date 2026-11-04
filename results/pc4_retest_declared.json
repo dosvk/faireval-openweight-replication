@@ -1,0 +1,228 @@
+{
+ "status": "EXPLORATORY - characterises the cause; does NOT reinstate any halted arm",
+ "authorised_by": "D-P10-15 item 3; protocol declared in DEVIATIONS.md D-1",
+ "judge": "qwen2.5:7b-instruct",
+ "osf_doi": "10.17605/OSF.IO/JW59C",
+ "protocol": {
+  "serial": true,
+  "ollama_num_parallel": "1",
+  "temperature": 0.0,
+  "seed": 1234,
+  "draw_seed_original": 20261010,
+  "draw_seed_fresh": 20261011
+ },
+ "n_prompts": 20,
+ "n_mismatched": 3,
+ "mismatch_rate": 0.15,
+ "mismatched": [
+  {
+   "set": "original",
+   "qid": 77,
+   "identical": false,
+   "len_a": 1766,
+   "len_b": 1653,
+   "tok_a": 332,
+   "tok_b": 307
+  },
+  {
+   "set": "fresh",
+   "qid": 73,
+   "identical": false,
+   "len_a": 1429,
+   "len_b": 1600,
+   "tok_a": 259,
+   "tok_b": 283
+  },
+  {
+   "set": "fresh",
+   "qid": 25,
+   "identical": false,
+   "len_a": 1481,
+   "len_b": 1174,
+   "tok_a": 269,
+   "tok_b": 199
+  }
+ ],
+ "rows": [
+  {
+   "set": "original",
+   "qid": 45,
+   "identical": true,
+   "len_a": 1227,
+   "len_b": 1227,
+   "tok_a": 230,
+   "tok_b": 230
+  },
+  {
+   "set": "original",
+   "qid": 30,
+   "identical": true,
+   "len_a": 1669,
+   "len_b": 1669,
+   "tok_a": 300,
+   "tok_b": 300
+  },
+  {
+   "set": "original",
+   "qid": 6,
+   "identical": true,
+   "len_a": 1229,
+   "len_b": 1229,
+   "tok_a": 208,
+   "tok_b": 208
+  },
+  {
+   "set": "original",
+   "qid": 33,
+   "identical": true,
+   "len_a": 1382,
+   "len_b": 1382,
+   "tok_a": 254,
+   "tok_b": 254
+  },
+  {
+   "set": "original",
+   "qid": 43,
+   "identical": true,
+   "len_a": 1350,
+   "len_b": 1350,
+   "tok_a": 247,
+   "tok_b": 247
+  },
+  {
+   "set": "original",
+   "qid": 52,
+   "identical": true,
+   "len_a": 2065,
+   "len_b": 2065,
+   "tok_a": 358,
+   "tok_b": 358
+  },
+  {
+   "set": "original",
+   "qid": 42,
+   "identical": true,
+   "len_a": 1383,
+   "len_b": 1383,
+   "tok_a": 265,
+   "tok_b": 265
+  },
+  {
+   "set": "original",
+   "qid": 46,
+   "identical": true,
+   "len_a": 1556,
+   "len_b": 1556,
+   "tok_a": 300,
+   "tok_b": 300
+  },
+  {
+   "set": "original",
+   "qid": 77,
+   "identical": false,
+   "len_a": 1766,
+   "len_b": 1653,
+   "tok_a": 332,
+   "tok_b": 307
+  },
+  {
+   "set": "original",
+   "qid": 23,
+   "identical": true,
+   "len_a": 1154,
+   "len_b": 1154,
+   "tok_a": 236,
+   "tok_b": 236
+  },
+  {
+   "set": "fresh",
+   "qid": 72,
+   "identical": true,
+   "len_a": 1256,
+   "len_b": 1256,
+   "tok_a": 229,
+   "tok_b": 229
+  },
+  {
+   "set": "fresh",
+   "qid": 54,
+   "identical": true,
+   "len_a": 1720,
+   "len_b": 1720,
+   "tok_a": 310,
+   "tok_b": 310
+  },
+  {
+   "set": "fresh",
+   "qid": 73,
+   "identical": false,
+   "len_a": 1429,
+   "len_b": 1600,
+   "tok_a": 259,
+   "tok_b": 283
+  },
+  {
+   "set": "fresh",
+   "qid": 53,
+   "identical": true,
+   "len_a": 1826,
+   "len_b": 1826,
+   "tok_a": 314,
+   "tok_b": 314
+  },
+  {
+   "set": "fresh",
+   "qid": 40,
+   "identical": true,
+   "len_a": 1837,
+   "len_b": 1837,
+   "tok_a": 307,
+   "tok_b": 307
+  },
+  {
+   "set": "fresh",
+   "qid": 9,
+   "identical": true,
+   "len_a": 1562,
+   "len_b": 1562,
+   "tok_a": 277,
+   "tok_b": 277
+  },
+  {
+   "set": "fresh",
+   "qid": 7,
+   "identical": true,
+   "len_a": 1471,
+   "len_b": 1471,
+   "tok_a": 256,
+   "tok_b": 256
+  },
+  {
+   "set": "fresh",
+   "qid": 25,
+   "identical": false,
+   "len_a": 1481,
+   "len_b": 1174,
+   "tok_a": 269,
+   "tok_b": 199
+  },
+  {
+   "set": "fresh",
+   "qid": 35,
+   "identical": true,
+   "len_a": 1455,
+   "len_b": 1455,
+   "tok_a": 265,
+   "tok_b": 265
+  },
+  {
+   "set": "fresh",
+   "qid": 3,
+   "identical": true,
+   "len_a": 1860,
+   "len_b": 1860,
+   "tok_a": 315,
+   "tok_b": 315
+  }
+ ]
+}

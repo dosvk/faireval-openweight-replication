@@ -9,6 +9,7 @@ DEVIATIONS.md itself is NEVER modified. It stays the dated register. Only the bu
 which is why this lives in the build step and not in an edit to the source.
 """
 import re
+import os
 import subprocess
 import sys
 
@@ -71,8 +72,11 @@ def main():
            'geometry: [margin=1in]\ncolorlinks: true\n---\n')
     doc = "\n".join([
         hdr,
-        "**DRAFT, NOT A SUBMISSION.** Pre-registration: https://osf.io/jw59c/ "
-        "(DOI 10.17605/OSF.IO/JW59C).\n",
+        # m7 (D-P10-93w): a submitted article must not say it is not a submission. The banner is
+        # now opt-in via P10_DRAFT_BANNER=1 for internal copies; the submission build omits it.
+        ("**DRAFT, NOT A SUBMISSION.** " if os.environ.get("P10_DRAFT_BANNER") else "")
+        + "Pre-registration: https://osf.io/jw59c/ "
+        + "(DOI 10.17605/OSF.IO/JW59C).\n",
         "# Abstract\n\n" + ab.strip() + "\n",
         intro.strip() + "\n",
         "# 4 Results\n\n" + body.strip() + "\n",
@@ -86,8 +90,12 @@ def main():
         "the repository rather than inlined here so that this article stays close to the\n"
         "length of a ReScience C replication while the record itself remains complete and\n"
         "auditable.\n"])
+    # Reviewer 1 (#142) found the documented build path unusable. In a fresh clone there is no
+    # build/ directory, so this used to die with FileNotFoundError on the line below.
+    os.makedirs("build", exist_ok=True)
     open("build/p10.md", "w").write(strip_filenames(doc))
     r = subprocess.run(["pandoc", "build/p10.md", "-o", "build/p10.pdf",
+                        "--citeproc", "--bibliography=rescience-build/bibliography.bib",
                         "--pdf-engine=tectonic", "--toc"],
                        capture_output=True, text=True)
     if r.returncode != 0:

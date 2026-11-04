@@ -1,0 +1,43 @@
+{
+  "_why": "D-P10-92w asked for a stated-once check. Three claims had each been corrected in one place and left wrong in another, and my reply then asserted the correction was complete. A canonical sentence plus a list of superseded wordings makes that failure mechanical to detect instead of relying on me having looked everywhere.",
+  "_how": "python3 check_claims.py  — exits 1 if any released text carries a superseded wording. Run it before any release commit.",
+  "claims": [
+    {
+      "id": "secondary-parser-skip-rule",
+      "canonical": "LABEL_ONLY matches any line of letters and spaces, so it skips a short punctuation-free prose line as well as a markdown label; bullets and lines containing punctuation are not skipped.",
+      "superseded": [
+        "do NOT skip bullets, prose",
+        "It skips nothing else",
+        "not bullets, not prose",
+        "does not skip prose"
+      ],
+      "found_by": "Reviewer 1, ReScience #142, 2026-11-04"
+    },
+    {
+      "id": "pc4-halt-scope",
+      "canonical": "The registration states the halt rule twice and differently; we adopted the per-arm reading and record both wordings at D-15.",
+      "superseded": [
+        "THE HALT RULE. A PC-4 failure halts",
+        "The registered rule halted their temperature-0 arms,",
+        "registered rule halted the temperature-0 arm and"
+      ],
+      "found_by": "Reviewer 1 §3 and the second-round seat"
+    },
+    {
+      "id": "hydrate-role",
+      "canonical": "hydrate_faireval.py verifies an existing checkout against pinned hashes and byte lengths. It does not fetch.",
+      "superseded": [
+        "fetches and verifies",
+        "fetch and verify",
+        "verifier fetches",
+        "fetches them at commit",
+        "inputs are fetched at run time"
+      ],
+      "found_by": "Reviewer 1 §2"
+    }
+  ],
+  "scope": {
+    "files": ["README.md", "DATA-AVAILABILITY.md", "DEVIATIONS.md", "SECTIONS-DRAFT.md", "RESULTS-DRAFT.md", "relaxed_parse.py", "run_replication.py", "hydrate_faireval.py", "analyze_mec.py"],
+    "exempt_note": "DEVIATIONS.md may quote a superseded wording INSIDE a dated entry that records the correction. Such a quote must appear within 400 characters of the word 'superseded', 'was FALSE', 'earlier wording' or 'we quoted only one side'; the checker enforces that rather than exempting the file."
+  }
+}

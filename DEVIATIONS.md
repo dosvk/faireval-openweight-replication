@@ -1,5 +1,11 @@
 # DEVIATIONS from the registered plan
 
+A NOTE ON THE `D-P10-n` IDENTIFIERS that appear in some entries below. They refer to rulings
+in an internal decision log which is NOT released: it is working material, not a scientific
+record. They are kept as provenance, so a reader can see that an entry was written in response
+to something rather than at will, but nothing in this register depends on being able to read
+them. Every entry states its own content and stands on its own.
+
 Registration: https://osf.io/jw59c/ — DOI 10.17605/OSF.IO/JW59C, registered 2026-10-10T03:19:58Z.
 Cleared text sha256 4ee7bc7467459459b8ad57891eb0d4767c3b49124af574bcbe0db36e47281350.
 
@@ -132,7 +138,7 @@ WHAT THIS DEVIATION ADDS. A separate function `parse_verdict_relaxed`. The regis
 `parse_verdict` and the registered `SCORE_LINE` regex are NOT modified, so every confirmatory
 number remains computable exactly as registered, from the same code, forever.
 
-THE RELAXED RULE, deliberately narrow, and nothing broader:
+THE RELAXED RULE, deliberately narrow, and nothing broader [2026-11-04T17:00:11Z, CORRECTED: this row's "nothing broader" is wrong. The skip pattern matches any line of letters and spaces, so a short punctuation-free prose line is skipped too; D-23 and D-24 carry the measured rule and the reviewer's counterexample. The original wording stays because the register does not delete.]:
 - Skip leading lines that consist ONLY of a markdown heading or emphasis label, for example
   `**Overall Scores:**` or `## Scores`.
 - Then apply the UNCHANGED `SCORE_LINE` regex to the first remaining non-empty line.
@@ -543,7 +549,11 @@ what the label means.
 THE REGISTRATION CONTRADICTS ITSELF ON WHAT A PC-4 FAILURE HALTS, and we quoted only one side.
 Section on H1 says "A PC-4 failure halts the study; it does not produce a correction term". The
 controls section says the assumption failing "is reported as a methods finding and halts the
-affected arm". We followed the second, per-arm reading, which let the temperature-1 arms continue.
+affected arm". We followed the second, per-arm reading, which let the temperature-1 arms continue. That choice is a
+DISCLOSED INTERPRETATION of an ambiguity in our own registration, not a derivation from it: the
+registration contains both wordings and does not rank them, so a reader who prefers the study-halt
+reading would conclude that no arm should have continued. We state the reading we took and leave
+the other visible rather than presenting the per-arm choice as the only available one.
 A reader following the first reading would conclude the whole study should have stopped at the first
 PC-4 failure. Both sentences are now quoted so the choice is visible rather than implied.
 
@@ -812,3 +822,232 @@ redacted copies and requires exact equality; it passes. Redaction touches only
 
 VERIFIED AFTERWARDS, NOT JUST INTENDED. Re-scanning the released copies finds zero samples
 containing a verbatim upstream span of eight words or more, and zero at twelve.
+
+---
+
+## D-22. The parser fingerprints were unreproducible; they are re-pinned under a stated convention
+**Written 2026-11-04T16:07:56Z, after Reviewer 1 on ReScience #142.**
+
+The Methods section pinned four sha256 prefixes for the two regexes and the parser body, so a reader
+could confirm the parser had not changed since registration. Reviewer 1 reported being unable to
+reproduce them from the released source. We could not either: twenty-six candidate conventions were
+tried - the compiled `.pattern` string with and without a trailing newline, the full assignment
+line, the right-hand side alone stripped and unstripped, `repr()` of the pattern, and for the
+function `inspect.getsource`, the body after the `def` line, the dedented body, the source with
+the docstring removed, and the stripped body. NONE reproduced any of the four.
+
+THE SUPERSEDED VALUES, kept because the register does not delete: SCORE_LINE 38d9c3ca1b23d5a2,
+SCORE_LABELLED 007446c7b728b8cd, COMPARE_LINE 10b434d6d06ebcbe, parse_verdict body 55af898e3576ab45.
+
+WHAT THIS IS AND IS NOT. It is a fact about the hashing convention, which we failed to record. It is
+NOT evidence that the parser changed after registration, and we do not claim it did; an
+unreproducible hash tells you about the hash, not about the hashed object. Reviewer 1 said the same
+and we agree.
+
+THE REPLACEMENT. `verify_parser_pins.py` states the convention exactly and recomputes all four:
+for each regex, the UTF-8 bytes of the compiled `.pattern` with no trailing newline; for the
+function, the UTF-8 bytes of `inspect.getsource` as returned. New pins: SCORE_LINE
+3731d07991798867, SCORE_LABELLED 4889ac20478acbd0, COMPARE_LINE 225bfde4c0c754e0, parse_verdict
+e6e373cf6113f98b. `--check` exits non-zero on mismatch, and that was verified by mutating a
+pattern and confirming the check fails.
+
+## D-23. What the ReScience #142 revision changed
+**Written 2026-11-04T16:07:56Z.**
+
+Reviewer 1 reproduced every stored number and requested no new inference. Four requests, all
+packaging and reporting; this entry records what moved.
+
+RELEASED, having existed locally but not in the repository: `results/pc4_retest_declared.json`,
+`logs/run-20261010T032331Z.log`, `SECTIONS-DRAFT.md`, `RESULTS-DRAFT.md`,
+`bench_judge_latency.py`. DATA-AVAILABILITY.md now carries a table mapping each judge's reported
+PC-4 outcome to the record behind it; all three are contemporaneous and attributable by the log's
+own judge banners, and Mistral's is doubly recorded. Nothing reconstructed is presented as
+contemporaneous.
+
+NARROWED rather than released: the decision log, which the inventory had advertised. It is internal
+working material, not a scientific record.
+
+CORRECTED IN THE TEXT. The Introduction's "the registration binds H2 to no particular arm" is
+replaced by the D-12 reading, with the alternative left in D-12 as the register requires. The 53.2%
+comparison is now explicitly a descriptive benchmark and not a like-for-like replication, with the
+three disanalogies named. The per-arm halt is described as a disclosed interpretation of two
+registration wordings rather than a derivation. The claim that the secondary parser skips "not
+bullets, not prose" was FALSE and is replaced by the implemented rule, with the counterexample Reviewer 1 supplied, which we reproduced before changing the text.
+
+MADE EXECUTABLE. `hydrate_faireval.py` is documented as the verifier it is, with the clone and
+pinned-checkout steps it needs. `analyze_mec.py` and `redact_public.py` take `--inputs` or
+`P10_INPUTS` instead of a hard-coded root, default unchanged. `redact_public.py --scan` was added
+so the no-upstream-text claim is shown rather than asserted. Every command in the README was run
+before it was written down.
+
+ONE THING WE DID NOT DO. The reviewer noted that the original-versus-redacted equality cannot be
+checked without the unredacted originals, which we do not release. That remains true and the README
+now says so, rather than implying the assertion is independently verifiable.
+
+---
+
+## D-24. Second-round reviewer fixes, and three claims that were corrected in one place only
+**Written 2026-11-04T16:52:11Z.**
+
+A second reading of the #142 revision found that three corrections I had reported as complete were
+each still wrong somewhere else, and that my reply to the reviewer asserted otherwise. The pattern
+matters more than the instances: I fixed the occurrence I had been shown, checked that one, and
+reported the claim as corrected.
+
+WHAT WAS STILL WRONG. The secondary parser's skip rule was fixed in a code comment while the module
+DOCSTRING kept the false version, and the manuscript carried "It skips nothing else" immediately
+followed by a sentence saying the rule is broader. The per-arm halt was presented as the
+registration's rule in three places while the disclosure that the registration says two different
+things sat only in D-15. `hydrate_faireval.py` was corrected in the README and still described as
+a fetcher in FIVE other places, one of which I missed again on the second pass and only found
+because the new checker flagged it.
+
+ALSO FIXED: the guard test for the prose case used a string WITH a period, so it passed trivially
+and the punctuation-free case the reviewer identified was never tested; the inventory omitted
+`verify_parser_pins.py`; section 4.2 said the idle-server conditions were "recorded but not
+verified" and then concluded non-determinism occurred "even when the server was handling one request
+at a time", which the artefact does not show - it shows the script issued requests serially, and
+server-side state was not observed. Minor: "two objects" preceding four pins, an orphan fragment
+"marginal distribution." on page 7, an ungrammatical abstract clause, and a planning script that
+hard-coded two /tmp paths and wrote to a directory it never created.
+
+THE GATE. `claims.json` holds one canonical sentence per claim plus the superseded wordings, and
+`check_claims.py` fails if any released text carries a superseded wording outside a dated
+correction. It is non-vacuous by construction: its selftest plants a superseded wording and requires
+the checker to fire, then quotes the same wording inside a correction and requires it to stay quiet.
+On its first real run it found two live wordings I had missed, including the fifth `hydrate`
+location.
+
+ONE THING ASKED FOR AND NOT DELIVERED. A sentence-start gate was requested. Over this corpus a
+period followed by a lowercase word gives 12 clean / 13 planted naive, 8 / 9 with filename and
+abbreviation exclusions, and 385 hits when scoped to function-word openers; no variant reached zero
+on clean text. A check that fires 385 times and cannot distinguish a clean tree from a planted
+defect is worse than none, so it is not shipped. The attempt did find two genuine lowercase sentence
+starts, both fixed, and the orphan fragment above - which I had seen in its output and dismissed as
+a table artefact. That dismissal was the same error as the one this entry is about.
+
+THE TWO GATES ADDED AFTERWARDS, both proven to discriminate before shipping. An orphan-line check:
+a short sentence-ending line whose PREVIOUS line also ends a sentence. Wrapped prose constantly
+produces short final lines, which is why the naive version gave 12 false positives, but wrapped
+prose never ends the previous line with a period. That single extra condition takes it to 0 clean
+and 1 planted. And an inventory check: DATA-AVAILABILITY.md claims to list "our own code, all of
+it", so every script in the release must be named there. On its first run it caught two scripts I
+had just shipped unlisted - the two gate scripts themselves - which is the same omission as the
+verifier left out of the inventory above, repeated within minutes of building the gate for it.
+
+---
+
+## D-25. The README was destroyed by a copy between two files of the same name
+**Written 2026-11-04T17:01:43Z, after seat A on ReScience #142.**
+
+THE WORST THING THAT HAPPENED IN THIS REVISION. `git diff --numstat` on the released README showed
+53 lines added and 64 deleted. The file had been overwritten, not extended, and what vanished was
+the title, the pre-registration link and DOI, the headline result, the pointer telling a reader to
+read this register first, the inventory of what is in the repository, the explanation of why the
+released verdicts are redacted, the hardware and quantisation note, and the entire licence section.
+A reader's first click no longer said what the repository was or how it was licensed.
+
+THE CAUSE WAS NOT A BAD EDIT. It was two different files with the same base name. The full README
+existed only inside the release tree, where it had been written. The project directory held a
+different, nearly empty `README.md`. I appended the new reproduction section to the project-root
+file and then copied it over the released one, repeatedly, without ever looking at what the copy
+replaced. Every individual step was reasonable and the result was destruction.
+
+RESTORED by taking the released README at the reviewed commit, cutting its old reproduction section
+out, and splicing the new one into that position, so nothing is lost and nothing is duplicated. All
+seven sections are back and verified by name.
+
+AND RESTORING IT REINTRODUCED A CORRECTED ERROR. The old README described
+`hydrate_faireval.py` as fetching the inputs, which had been corrected elsewhere earlier in this
+same revision. The stated-once checker caught it immediately. Reverting to an older version of a
+file brings back every claim that version carried, which is an argument for the checker rather than
+for care.
+
+THE GATE. `check_release.py` now requires the README to contain its title, the OSF DOI, the
+inventory heading and the licence heading, and compares the inventory against `git ls-files`
+rather than `ls *.py` so build inputs and data files are covered. On its first run with the
+broader comparison it found three released files the inventory did not name.
+
+ONE HAZARD CLOSED IN THE GUARD ITSELF. The stated-once checker's own selftest planted a wording in
+the REAL README and restored it in a `finally`. Interrupted between those two writes it would have
+left the README damaged, which is the failure this entry is about. It now works on a temporary copy
+and never writes a released file; the README's checksum is identical before and after a selftest.
+
+## D-26. A sibling project named in a public file
+**Written 2026-11-04T17:07:46Z, after the final verification pass on #142.**
+
+`hydrate_faireval.py` carried, since before the submission, a comment naming another of the
+author's papers by its internal project id and the filename of its dataset script. That paper is
+under double-anonymous review elsewhere. In a public repository under the author's own GitHub name,
+a reviewer of that other paper searching for its script name would have arrived here.
+
+Removed. The line now says what the script does and keeps its date. It was pre-existing rather than
+introduced by this revision, which is a reason to take it out now rather than to leave it.
+
+MY TOKEN SCAN HAD NOT LOOKED FOR THIS. It covered usernames, home paths, hostnames and secrets, and
+it returned zero twice while this line sat in a released file. Sibling project identifiers and the
+filenames of their scripts are a different class of disclosure and were simply not in the list. The
+list now includes the internal ids of the author's other concurrent papers and their dataset script
+names, and returns zero across every released file.
+
+AND WRITING THIS ENTRY REINTRODUCED THE PROBLEM ONCE. The first version of this row listed the
+six tokens by name, which re-published in a public register exactly the identifiers the scrub had
+just removed. The token scan caught it on the next run. A row describing a disclosure must not
+restate it; this one now names the class instead.
+
+The `D-P10-n` identifiers remain, 45 of them, as declared provenance; the header of this register
+explains that they refer to an unreleased internal log and that every entry stands on its own.
+
+## D-27. Every PDF sha we reported fingerprinted a build, not the content
+**Written 2026-11-04T17:09:09Z.**
+
+While confirming whether scrubbing a code comment had changed the article, the rebuild produced a
+different sha from byte-identical sources. Rebuilding again produced a third. LuaTeX stamps the
+build time into the PDF, so the hash moved on every run:
+
+    same sources, rebuild 1   6ae50b9839ca234b
+    same sources, rebuild 2   2cdb2761236ca9ec
+
+So every article sha quoted during this revision, including in the reply to the reviewer, identified
+a BUILD rather than a document. A reader checking "the article is sha X" by rebuilding would have
+got a different number and could reasonably have concluded the artefact had been altered. For a
+replication paper that is the wrong defect to ship.
+
+FIXED. `build_article.sh` pins `SOURCE_DATE_EPOCH` and `FORCE_SOURCE_DATE`, which makes the
+build byte-reproducible: two consecutive runs now give 7ad5bbb50da7d159 and 7ad5bbb50da7d159.
+`--check` rebuilds and fails if the sha moves, so a reader can verify the number rather than
+trust it. The epoch is fixed in the script and is part of the build definition: changing it changes
+the sha without changing a word.
+
+WHY THIS WAS NOT CAUGHT EARLIER. Every sha in this revision was read off disk rather than typed,
+which is why none of them was wrong. But "read from disk" answers a different question from "will
+anyone else get this number", and I had been treating the first as if it settled the second.
+
+## D-28. The article source was not in the release, and the shipped PDF was built on a stale bibliography
+**Written 2026-11-04T17:18:41Z, after a fresh-clone test.**
+
+TWO FAULTS, FOUND BY RUNNING THE DOCUMENTED COMMAND FROM A CLONE RATHER THAN IN THE WORKING TREE.
+
+FIRST: `build_article.sh` shipped without the LaTeX source it builds. The release carried
+`article/article.pdf` and `bibliography.bib` and nothing else from the template, so the script
+failed from a clone with `latexmk rc=11`. We had told the reviewer in the same revision that we
+had fixed the class of defect where a documented command cannot run, and then shipped a new one.
+The whole article source is now released under `rescience-build/`, with the template's GPL v3
+`COPYING`, the bundled fonts under their own Apache 2.0 and SIL OFL licences, and
+`TEMPLATE-CHANGES.md` listing every change we made to the template as GPL v3 requires.
+
+SECOND, AND WORSE: a three-week-old `article.bbl` sat in the working directory and every build
+silently used it. A clean build of the same sources produces SEVENTEEN pages; the PDF we had shipped
+and reported was EIGHTEEN. The extra page came from a stale bibliography, not from the sources. The
+build script now deletes the residue before building, so a build here is the build a clone gets.
+
+AND THE REPRODUCIBILITY PIN WAS THE WRONG QUANTITY. With the timestamp pinned, two clean builds of
+identical sources still differ in raw bytes between two directories - 0355a0ef30bb49e2 here,
+2cec15b048cbf0af in a clone - while their extracted text is byte-identical at
+c977d432ad496787, 60,705 characters, and both are 17 pages. Pinning the byte hash would have told
+every reader their correct build was wrong. `--check` now verifies the page count and the text
+hash, which is what a reader is trying to confirm and which does reproduce across locations.
+
+THE LESSON IS THE TEST, NOT THE FIX. All three faults were invisible to every check I had, because
+every check ran in the directory where the artefact was made. "It runs for me" and "it runs from a
+clone" are different claims, and only the second one is the one a reader makes.

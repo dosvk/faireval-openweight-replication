@@ -1,0 +1,982 @@
+Pre-registration: https://osf.io/jw59c/ (DOI 10.17605/OSF.IO/JW59C).
+
+\section{Abstract}\label{abstract}
+
+\textcite{wang2024} report that large language models used as pairwise evaluators reverse their
+verdicts when the two candidate answers are swapped, and propose three calibration strategies, one of which, Multiple Evidence Calibration, this study replicates; they report that these
+strategies recover alignment with human labels. Their judges were closed OpenAI endpoints, and the snapshot
+pinned in their repository is not in the provider's current model list, so their numbers can no longer be reproduced with the original judges.
+We pre-registered a replication that repeats their published protocol while substituting three
+open-weight instruction-tuned judges, and report it here.
+
+None of the three pre-registered hypotheses is evaluable as registered. All three read from a
+temperature-0 arm that did not survive: a determinism control we registered
+before running found that two of the three judges failed to reproduce byte-identical output at
+temperature 0 with a fixed seed, which halted their temperature-0 arms by the rule we had committed
+to, and the third judge's output did not satisfy the registered output-format parser for 313 of its
+320 records. H3 was additionally unevaluable for a reason independent of that: one of its two
+required cells was never generated, and no counterpart to the original's calibrated quantity was
+ever computed. H2 was not evaluable as registered, because the registered Table 1 temperature-0 VANILLA arm
+produced no analysable data. Under a post-registration deviation (the deviations register, D-8), fixed before any
+H2 statistic was computed, the unchanged test was applied to every surviving both-order MEC arm and
+the descriptive criterion was met on SCORING\_CODE - one pair, Llama-3.1 against Qwen2.5, with
+opposite signs and non-overlapping intervals - and was not met on COMPARING. H2 remains NOT
+evaluable as registered; these results are descriptive only.
+Under the asymmetry declared in advance, a null is never written as a refutation. A single pre-declared re-test
+under serial requests, run on the one judge that had failed first (Qwen2.5-7B-Instruct), found the
+non-determinism persisted for that judge under the one controlled condition we tested, serial requests to a server we intended to be otherwise idle with the model resident, conditions the re-test script records but does not verify, which is narrower than ``contention removed'' in general, so we do not attribute it to
+load.
+
+The temperature-1 arms survived and are reported descriptively. On those arms, and as a description
+rather than a test, verdicts changed with presentation order beyond each judge's own same-order
+noise - by 0.038, 0.138 and 0.250 on the scoring template, and most strongly by 0.810 on the
+reconstructed COMPARING prompt. We also report what the failures
+cost, the parse accounting per judge and arm, one operational data loss of our own, and every
+deviation from the registered plan, each dated. The replication's contribution is therefore not a
+verdict on positional bias. It is a demonstration that a protocol resting on temperature-0
+determinism and on a strict output format can fail to execute on open-weight judges, and a record
+of exactly where and how it failed.
+
+Pre-registration: https://osf.io/jw59c/ (DOI 10.17605/OSF.IO/JW59C).
+
+\section{1 Introduction}\label{introduction}
+
+Large language models are now routinely used to score other models' outputs. The appeal is obvious:
+a judge model is cheaper than a human annotator and available on demand. The risk is equally
+obvious, and \textcite{wang2024} demonstrated one form of it. They showed that an LLM asked to pick
+the better of two answers can reverse its verdict when the two answers are swapped in the prompt,
+reported conflict rates as high as 82.5\% under such a swap, and proposed three calibration strategies. This study replicates
+ONE of them, Multiple Evidence Calibration. Balanced Position Calibration was not run: no BPC
+quantity was computed at any point, which is one of two independent reasons H3 is not evaluable
+(see the deviations register).
+
+That result matters to anyone who uses a judge model, and it invites a direct question. The original
+used two closed OpenAI endpoints as judges. The snapshot pinned in its repository,
+\texttt{gpt-3.5-turbo-0301}, is not in the provider's current model list, so the original's numbers can no longer be reproduced
+with the original judges by anyone, including its authors. Does the finding survive when the judge
+is an open-weight model that anyone can download and pin by digest?
+
+We pre-registered a replication to answer that \autocite{prereg}. Registration preceded every confirmatory arm. It
+did not precede all contact with the data: the registration itself discloses a 6-call pilot and a
+9-call output-format check on 3 of the 80 questions, run before registering
+(https://osf.io/jw59c/, DOI 10.17605/OSF.IO/JW59C). The design repeats the published protocol and
+varies one technical detail deliberately, the judge, which is the kind of variation a replication involves. Three open-weight instruction-tuned models from three
+different families stand in for those endpoints.
+
+The answer is that we could not run the registered test, and the reason is itself the finding.
+
+The pre-registration included a determinism control, written before any run, requiring that
+re-running a prompt at temperature 0 with a fixed seed reproduce byte-identical output. The original
+states that it sets ``the generated temperature to 0 for deterministic generation results'', and
+H1 and H3 both read from that temperature-0 arm, and H2's scope is discussed in the deviations register. Two of our three judges
+failed the control. On the reading we adopted, the registered rule halted their temperature-0 arms (D-15), and we did not convert the
+failure into a correction term, because the pre-registration explicitly forbids that. The third
+judge passed the control but produced output that did not satisfy the registered output-format
+parser on 313 of 320 records, leaving one usable paired observation.
+
+So H1 and H3 are not evaluable as registered, and H2 is not evaluable as registered either. On the
+reading we adopt, H2's registered claim C-2 is scoped to the Table 1 temperature-0 VANILLA
+template, which produced no analysable data; that scope was established after the null was known and
+is recorded, with the earlier alternative reading that the registration bound H2 to no particular
+arm, in the deviations register at D-12. What the surviving arms show about H2 is therefore
+reported descriptively rather than as a test, and D-18 records the correction that changed
+what those arms appear to show. This paper reports that outcome, what survived,
+and what it cost, with every deviation from the registered plan dated and listed. We are explicit
+about what this is not: it is not evidence that the original result is false. It is evidence that a
+protocol resting on temperature-0 determinism and on a strict output format does not transfer
+unchanged to open-weight judges served locally.
+
+\section{2 Related work}\label{related-work}
+
+Judge models and their failure modes. \textcite{zheng2023} introduced the MT-Bench and Chatbot Arena
+evaluations. \textcite{wang2024}, the study replicated here, isolates the swap-induced verdict
+reversal, quantifies it as a conflict rate, and proposes three calibration strategies, of which this study replicates one, Multiple Evidence Calibration. The 80-question
+item set we use is the one distributed in the original's own repository; we make no claim here about
+who first assembled it, because we did not verify that attribution.
+
+Replication of machine-learning results. The target venue, ReScience C, publishes replications and accepts
+negative results; its author guidelines are the source for the venue requirements we follow \autocite{rescience_guidelines}. We do
+not quote a definition of replication versus reproduction to a specific page, because we did not
+locate that wording on the guidelines page we fetched.
+
+A concurrent pre-registration by the author \autocite{prereg2}, registered on 2026-10-09, re-analyses five previously released judge-verdict datasets, none of them FairEval, for the gap between raw and chance-corrected agreement; it runs no judges, uses none of this study's verdicts, had run no analysis at registration, and the kappa-with-PABAK reporting used here was fixed in this study's own registration (sections 10 and 13), not imported from it.
+
+\section{3 Methods}\label{methods}
+
+The design was fixed in the pre-registration before data collection and is summarised here. Where
+this paper departs from it, the departure is numbered and dated in the deviations register.
+
+\subsection{3.1 Items and inputs}\label{items-and-inputs}
+
+The items are the original authors' released question set, candidate answers and human labels, from
+https://github.com/i-Eval/FairEval \autocite{faireval}. That repository carries no licence file, so we redistribute none
+of its contents. Instead the inputs are obtained by the reader, who clones the original repository pinned to
+commit \texttt{453c117a69159fd7b7de2f4e0519bac57bee21f4} and verified by SHA-256 before use. The verifier
+checks hash and byte length for all six files it pins and exits non-zero on any mismatch. Five are
+consumed by the arms that ran; the GPT-4 answer file is loaded and verified but never judged,
+because no arm uses it; it was
+tested green on a clean clone and tested to halt on a deliberately altered file.
+
+The human labels are the original's own 80 annotations, with marginals ChatGPT 41, tie 14,
+Vicuna-13B 25. We considered re-annotating and rejected it: substituting new labels would replace
+the comparison standard and make our accuracy and kappa incomparable with the original's Table 5,
+which is the comparison the study exists to make.
+
+\subsection{3.2 Judges}\label{judges}
+
+Three open-weight instruction-tuned models from three families. The harness sends model TAGS to
+the local server, not digests; the digests below were read from the local model store after the runs
+and are recorded for identification, with the limitation set out in the deviations register, D-11:
+Qwen2.5-7B-Instruct (\texttt{845dbda0ea48}), Llama-3.1-8B-Instruct-q4\_K\_M (\texttt{46e0c10c039e}) and
+Mistral-7B-Instruct (\texttt{6577803aa9a0}). Those digests were read from the local model store, not
+written into the run artefacts as the registration required; see the deviations register, D-11. All inference
+ran locally on an Apple M4 Pro with 48 GB of
+unified memory. No paid API was used. A model that could not be pinned by digest would not have been
+used.
+
+\subsection{3.3 Prompts}\label{prompts}
+
+Prompt provenance. The original prints two templates. Table 1 is the plain evaluation template,
+which asks for two scores on a single first line; we use it for the VANILLA arm. Table 3 is ``the
+evidence calibration evaluation template that prompts LLMs to generate the evaluation evidence
+first, and then evaluate two responses'', which is the MEC template. The \texttt{gen\_prompt} in the released
+\texttt{FairEval.py}, lines 35-49 at the pinned commit, is a near-verbatim variant of Table 3: it carries a
+system message, labels the sections slightly differently, and asks for the explanation before the
+scores. We use that released variant for the MEC arms, and record it as a variant rather than as
+Table 3 itself.
+
+The evidence that the released code is the MEC path is in the code. \texttt{query\_gpt} hardcodes
+\texttt{temperature=1} and \texttt{n=args.k}, which is the paper's MEC setting of temperature 1 with k = 3; the
+\texttt{args.bpc\ ==\ 1} branch performs the order swap; and the repository README invokes the script as
+``evaluation with MEC and BPC strategies''. The released code cannot perform a temperature-0 vanilla
+run at all, because the temperature is fixed in the source.
+
+The COMPARING prompt is a reconstruction and is declared as a deviation. The original does not print
+the template, in any figure or appendix or in the released code. It does specify the labels in prose,
+naming results ``\,`Assistant 1', `Assistant 2', or `Same'\,'', so the output space is given and only the
+prompt wording is ours.
+
+\subsection{3.4 Arms, seeds and controls}\label{arms-seeds-and-controls}
+
+Every question in the VANILLA and MEC arms is judged in both presentation orders. Arms per judge: a
+Table 2 arm (VANILLA, temperature 0, both orders, two candidate pairs, SCORING template only, 320
+calls); a Table 5 arm (MEC, temperature 1, k = 3, both orders, both templates, 960 calls); and an
+identical-order noise-control arm measuring each judge's self-inconsistency rate. That arm is
+narrower than the others: it runs in the AB order only and on the close candidate pair only
+(ChatGPT against Vicuna-13B), over both templates, 480 calls.
+
+Departures from the original beyond the judge substitution, listed rather than left to inference:
+
+\begin{itemize}
+\tightlist
+\item
+  Seeds are fixed, which the original does not state: base 1234, MEC's k = 3 samples at 1234 + i, the
+  noise arm at a disjoint block 1334 + i.
+\item
+  All three judges are Q4\_K\_M quantised local builds, not full-precision weights. This applies to
+  Qwen2.5 and Mistral as well as to Llama-3.1, whose tag names the quantisation explicitly.
+\item
+  The COMPARING prompt is our reconstruction; the original prints it nowhere.
+\item
+  The original's 100-run random-order average is computed by resampling our stored both-order
+  verdicts rather than by 100 fresh inference passes.
+\item
+  Verdict extraction uses a strict regex on the template's requested format, and outputs that do not
+  match it are recorded as unparseable rather than coerced.
+\item
+  MEC aggregation is a MAJORITY VOTE over the k = 3 parsed samples, with ties broken by first-seen
+  order, and a record counts as parsed if ANY of its samples parsed. The original averages the
+  numeric scores instead. This is a substantive difference in aggregation, not a detail.
+\end{itemize}
+
+Because a record counts as parsed if any one sample parsed, the record-level unparseable rate
+understates how often an individual generation failed. Section 4.3 therefore reports parse
+accounting at BOTH levels, per judge and per template.
+
+Seeds, which the original does not state, were fixed in advance: base seed 1234, with MEC's k = 3
+samples drawn at 1234 + i, because a single fixed seed at temperature 1 returns identical text and
+would silently collapse MEC to one sample. The noise-control arm uses a disjoint block, 1334 + i, so
+its verdict is an independent draw rather than a replay.
+
+Five positive controls are implemented as \texttt{pc1\_input\_integrity}, \texttt{pc2\_ground\_truth\_recovery},
+\texttt{pc3\_order\_bookkeeping}, \texttt{pc4\_determinism} and \texttt{pc5\_parse\_accounting}. PC-3 checks that each
+(question, pair, arm, template) cell holds exactly one AB and one BA verdict. It does NOT compare
+the stored candidate-answer hashes: those hashes (\texttt{r1\_sha}, \texttt{r2\_sha}) are recorded on every record
+but never read by the check, so PC-3 detects a missing or duplicated order, not a swapped candidate
+text. An earlier version of this paper described it as hash-based, which it is not. The first, second and
+fourth run before any arm; the third and fifth require verdicts and so run after the arms but
+before any hypothesis is examined. The point of all five is that a pipeline
+check could fire before any result existed: input integrity, exact recovery of the human-label
+marginals, order bookkeeping, temperature-0 determinism, and parse
+accounting in which unparseable verdicts are counted and reported rather than dropped.
+
+\subsection{3.5 Verdict extraction, and the determinism control as implemented}\label{verdict-extraction-and-the-determinism-control-as-implemented}
+
+Two parsers exist. One is registered and produces every confirmatory number; the other is a
+secondary, exploratory parser declared after the data was seen. They are never mixed.
+
+THE REGISTERED PARSER. \texttt{parse\_verdict} in \texttt{run\_replication.py} has THREE extraction rules, one per
+template, and they are not the same rule. Stating them precisely matters, because the arm carrying
+every MEC result uses the most permissive of the three.
+
+\begin{itemize}
+\tightlist
+\item
+  SCORING, the paper's Table 1 template, used for the VANILLA arm. Requires the two numeric scores
+  on the FIRST non-empty line, matched by the regex \texttt{SCORE\_LINE} applied with \texttt{.match} to that line
+  only. The pattern requires the whole line to be two numbers separated by whitespace, optionally
+  with one decimal place each, and nothing else.
+\item
+  SCORING\_CODE, the authors' released variant, used for every MEC and noise arm. Applies
+  \texttt{SCORE\_LABELLED.search} to the WHOLE output, so the labelled score pair is accepted wherever it
+  appears. This is deliberately more permissive than the Table 1 rule, because the authors' own
+  prompt asks for the explanation before the scores.
+\item
+  COMPARING, our reconstruction. Applies \texttt{COMPARE\_LINE.match} to the first non-empty line and maps
+  ``Assistant 1'', ``Assistant 2'' and ``Same'' to the three outcomes.
+\end{itemize}
+
+In all three cases the higher score, or the named assistant, becomes a win for that slot, equal
+scores or ``Same'' become a tie, and an output that does not match is recorded as unparseable with
+its raw text retained. Nothing is ever coerced into a verdict.
+
+An earlier version of this section described only the first-line rule and attributed it to ``the
+scoring templates''. That was wrong for SCORING\_CODE, and wrong about the arm that produces the MEC
+figures.
+
+Because the surrounding harness has changed since registration for reasons unrelated to parsing, a
+whole-file hash is the wrong thing to pin. The four objects that must not change are pinned
+individually, and can be re-checked from the released code:
+
+\begin{verbatim}
+SCORE_LINE 3731d07991798867, SCORE_LABELLED 4889ac20478acbd0, COMPARE_LINE 225bfde4c0c754e0 and
+\end{verbatim}
+
+parse\_verdict e6e373cf6113f98b. The hashed bytes are stated exactly in \texttt{verify\_parser\_pins.py},
+which recomputes all four from the released source: for each regex, the UTF-8 bytes of the
+compiled \texttt{.pattern} string with no trailing newline; for the function, the UTF-8 bytes of
+\texttt{inspect.getsource} exactly as returned. Run \texttt{python3\ verify\_parser\_pins.py\ -\/-check}.
+
+THESE PINS REPLACE FOUR EARLIER ONES. Reviewer 1 on \#142 could not reproduce the earlier
+prefixes, and neither could we: twenty-six candidate conventions over the released source
+reproduced none of them, so the original hashing convention is not recoverable from what we
+recorded. That is a fact about the convention, not about the parser - it is NOT evidence that
+the parser changed after registration, and we do not claim it did. The superseded values are
+kept in the deviations register at D-22.
+
+THE SECONDARY PARSER is \texttt{parse\_verdict\_relaxed} in \texttt{relaxed\_parse.py}. It imports the unchanged
+\texttt{SCORE\_LINE} from the harness rather than redefining it, so it cannot drift from the registered
+rule. It skips leading lines that consist only of a markdown heading or emphasis label, then applies
+the unchanged regex to the first remaining non-empty line, once. Its skip rule is broader than a markdown label: the pattern matches
+any line consisting only of letters and spaces, with an optional heading marker, emphasis marks or
+trailing colon. A short prose line such as ``Both responses are adequate'' matches it and would be
+skipped. It does not skip bullets, numbered lines, or any line containing punctuation or digits. Its rule was chosen after the outputs were seen and the recovered count was known before
+it was written; both facts are recorded in the deviations register, D-5. Every figure it produces is labelled
+exploratory and is printed beside the registered figure, never instead of it.
+
+THE DETERMINISM CONTROL, PC-4, AS IMPLEMENTED. Ten questions are drawn once with a fixed seed,
+\texttt{random.Random(20261010).sample(questions,\ 10)}, from the checksum-pinned question file, so the draw
+is identical for every judge and reproducible from the released code. The ten are 6, 23, 30, 33, 42,
+43, 45, 46, 52 and 77. For each, the close pair is rendered through the paper's Table 1 template and
+submitted twice at temperature 0 with the same fixed seed 1234. The comparison is byte equality of
+the two returned strings; nothing is normalised first. A judge fails the control if any of the ten
+pairs differs.
+
+THE HALT RULE, AND WHICH READING OF IT WE ADOPTED. Our registration states this twice and the two
+statements differ. The H1 section says ``A PC-4 failure halts the study; it does not produce a
+correction term''. The controls section says the assumption failing ``is reported as a methods
+finding and halts the affected arm''. The registration does not rank them. We adopted the second,
+per-arm reading, under which a PC-4 failure halts that judge's temperature-0 arm and is reported as
+a methods finding; a reader who prefers the first reading would conclude that no arm should have
+continued. D-15 records the choice and leaves both wordings visible. It is not converted into a correction term, and it does not halt the judge's temperature-1
+arms, which rest on the measured noise control rather than on PC-4. The failure is recorded in the
+results artefact as \texttt{pc4\_ok} and \texttt{t0\_arm}. One re-test under controlled conditions was pre-declared
+in the deviations register, D-1 before its outcome was known. It has run. Under that protocol
+Qwen2.5-7B-Instruct differed on 3 of 20 prompt pairs, a mismatch rate of 0.15
+(\texttt{results/pc4\_retest\_declared.json}). It is exploratory and reinstates nothing.
+
+\subsection{3.6 Analysis}\label{analysis}
+
+All statistical inference is paired on question and clustered on question, since the same 80 items recur in
+every condition. H1 and H3 were registered as exact McNemar per judge with Holm-Bonferroni
+correction across judges within family. H2 was registered differently, and we state it in the
+registration's own terms: ``per judge, the signed difference between first-position and
+second-position win rates with a question-clustered bootstrap interval; then whether any two judges
+differ in sign with non-overlapping intervals''. Interval types differ and are labelled wherever they appear. The H2 intervals and the c - s
+intervals use 10,000 question resamples. The random-order MEC accuracy brackets use 1,000 draws
+over presentation orders with the question set held fixed, which is a different resampling
+procedure answering a different question; the draw count is set in \texttt{analyze\_mec.py}'s main
+analysis loop. Kappa is reported alongside PABAK in the results table, and the matched-marginal
+chance agreement pe and both full marginal distributions are printed for every cell by
+\texttt{analyze\_mec.py}; they are not carried in the table itself. Kappa is never given as a bare
+number, because with ties at 17.5\% of labels a kappa difference can be an artefact of the marginal
+distribution. The registration also asks for prevalence and bias indices \autocite{byrt1993}; those are defined for a
+two-category table and our verdict space has three categories, so they are not computed, and
+the deviations register, D-13 records that as an unmet registered requirement rather than substituting a
+look-alike number.
+
+Because the temperature-0 arm did not survive, no registered test of H1 or H3 was performed. H2 is also not evaluable as registered; what the surviving arms show about it is a post-registration descriptive deviation, set out in the deviations register, D-12 and D-18. Section
+4 reports descriptive quantities from the arms that did survive, labelled as such.
+
+\section{4 Results}\label{results}
+
+\subsection{4.1 The headline: none of the three hypotheses is evaluable as registered}\label{the-headline-none-of-the-three-hypotheses-is-evaluable-as-registered}
+
+None of H1, H2 or H3 is evaluable as registered.
+
+H1 reads from the temperature-0 VANILLA arm, and that arm did not survive for any of the three
+judges. H3 reads from it too, and was additionally unevaluable for reasons independent of the
+determinism failure, set out in the deviations register, D-9 and D-10: the VANILLA/COMPARING cell was never
+generated, and no counterpart to the original's calibrated quantity was ever computed.
+
+H2 is also not evaluable as registered. Under a post-registration deviation its unchanged test
+was applied to the surviving MEC arms and reported descriptively; section 4.6 gives the figures
+and the limits on reading them.
+
+An earlier draft of this paper reported H2 as evaluated and inconclusive. That classification was
+wrong, and it was corrected only after the null result was known; the deviations register, D-12 records the
+reclassification, its timing and the referee reading that prompted it. The H2 numbers changed when a later frame error was corrected; the deviations register, D-18 gives the detail.
+
+Two judges failed the pre-registered determinism control, PC-4, which requires that re-running a
+prompt at temperature 0 with a fixed seed reproduce byte-identical output. The control checks ten
+prompts per judge. Qwen2.5-7B-Instruct failed on 1 of 10 (question 77), Mistral-7B-Instruct on
+2 of 10 (questions 33 and 52), and Llama-3.1-8B-Instruct on 0 of 10. In both failing cases the
+registered rule, on the per-arm reading we adopted and disclose at D-15, halted the temperature-0
+arm and the failure is reported here as a methods finding;
+it was not converted into a correction term, which the pre-registration explicitly forbids.
+
+Llama-3.1-8B-Instruct passed PC-4 and ran all three arms. Its temperature-0 data is nonetheless
+unusable for the registered tests, for a different reason given in 4.3: under the registered parser
+only 1 of 160 question-pair cells has both presentation orders parsed, so there is effectively no
+paired data to test.
+
+This is a negative result about the protocol under judge substitution, not a finding about
+positional bias. We did not measure positional bias well enough to say anything about it.
+
+\subsection{4.2 What the determinism failure means for the original's assumption}\label{what-the-determinism-failure-means-for-the-originals-assumption}
+
+The original states that it sets ``the generated temperature to 0 for deterministic generation
+results''. On this stack that assumption did not hold for two of three judges. The effect is
+intermittent: the prompt that failed for Qwen reproduced byte-identical output on four subsequent
+isolated repeats. Those four repeats were themselves re-executions of the determinism check outside
+any declared protocol, before D-1 existed. They are not a second registered test and we do not
+treat them as one.
+
+All three judges were checked on the same ten questions: the harness draws them with a fixed seed
+(\texttt{random.Random(20261010)}) from a question file pinned by commit and checksum, so the draw is
+identical across judges and reproducible from the released code. The three failures therefore fall
+on three different questions, with none shared between judges. That observation is weak on its own
+terms, 3 mismatches across 30 checks. A load or scheduling explanation would fit it; the D-1 re-test
+below tested that explanation and did not support it. So the observation is reported as a
+description of where the failures fell and not as evidence for any mechanism. Question 77 did recur
+for the same judge in that re-test, which is the one point of continuity across the two runs.
+
+A single controlled re-test was pre-declared in the deviations register, D-1 before the outcome was known,
+and it has now run. It was exploratory and reinstated no halted arm. It does not support the load
+explanation. Under the declared protocol - serial requests, \texttt{OLLAMA\_NUM\_PARALLEL=1}, the judge model
+resident before the first call, nothing else issuing requests, all of which were INTENDED
+conditions rather than enforced ones, since \texttt{pc4\_retest.py} records the environment variable
+and verifies none of the four, so whether they held is unverifiable from the artefact -, Qwen2.5-7B-Instruct differed on
+3 of 20 prompt pairs, a mismatch rate of 0.15: 1 of the 10 originally checked questions and 2 of 10
+newly drawn ones
+(\texttt{results/pc4\_retest\_declared.json}, fields \texttt{n\_prompts}, \texttt{n\_mismatched}, \texttt{mismatch\_rate},
+\texttt{mismatched}). The differences are substantial rather than marginal, for example 332 against 307
+output tokens on question 77.
+
+So temperature-0 non-determinism persisted under the one controlled condition we tested, serial requests to a server we intended to be otherwise idle with the model resident, conditions the re-test script records but does not verify, which is narrower than ``contention removed'' in general. We do not compare the two
+rates: 3 of 20 against 1 of 10 cannot be distinguished at these sample sizes (Fisher exact,
+two-sided, p = 1.00), so the re-test establishes persistence and not a change in magnitude. We
+therefore do not attribute the non-determinism to load or scheduling. We also
+do not offer a replacement explanation: identifying the mechanism would need instrumentation below
+the inference server, which this study does not have. What we can say is that on this stack, for
+this judge, a fixed seed and temperature 0 did not produce reproducible output under the one
+condition the artefact records: the script issued its requests serially. Server-side state was not
+observed, so we cannot say the server was handling one request at a time.
+
+The practical reading, stated for the models we ran and not beyond them: on these locally served
+7-8B models, temperature 0 did not guarantee identical output, and a conflict rate computed without
+a determinism check cannot separate run-to-run variation from positional bias. That is the
+ambiguity PC-4 was written to detect, and it detected it.
+
+We make no claim about the original's own numbers. Its judges were different models served
+differently, and three locally served models on one stack cannot speak to them.
+
+\subsection{4.3 Parse accounting (PC-5), and one parser artefact}\label{parse-accounting-pc-5-and-one-parser-artefact}
+
+PC-5 requires unparseable outputs to be counted and reported per judge, never dropped. Counts for
+the arms that ran:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lllll@{}}
+\toprule\noalign{}
+judge & arm / template & records & parsed (registered) & unparseable \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & VANILLA / SCORING & 320 & 7 & 313 (97.8\%) \\
+Llama-3.1-8B & MEC / SCORING\_CODE & 160 & 159 & 1 (0.6\%) \\
+Llama-3.1-8B & MEC / COMPARING & 160 & 109 & 51 (31.9\%) \\
+Llama-3.1-8B & noise / SCORING\_CODE & 80 & 80 & 0 \\
+Llama-3.1-8B & noise / COMPARING & 80 & 73 & 7 (8.8\%) \\
+Mistral-7B & MEC / SCORING\_CODE & 160 & 160 & 0 \\
+Mistral-7B & MEC / COMPARING & 160 & 133 & 27 (16.9\%) \\
+Mistral-7B & noise / SCORING\_CODE & 80 & 80 & 0 \\
+Mistral-7B & noise / COMPARING & 80 & 71 & 9 (11.2\%) \\
+\end{longtable}
+}
+
+A record counts as parsed if ANY of its k = 3 samples parsed, so the record-level rates above
+understate how often an individual generation failed. Sample-level accounting, which the record
+level hides:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+judge
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+arm / template
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+records
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+unparsed records
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+samples
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+unparsed samples
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & VANILLA / SCORING & 320 & 313 (97.8\%) & 320 & 313 (97.8\%) \\
+Llama-3.1-8B & MEC / SCORING\_CODE & 160 & 1 (0.6\%) & 480 & 116 (24.2\%) \\
+Llama-3.1-8B & MEC / COMPARING & 160 & 51 (31.9\%) & 480 & 359 (74.8\%) \\
+Llama-3.1-8B & noise / SCORING\_CODE & 80 & 0 & 240 & 69 (28.8\%) \\
+Llama-3.1-8B & noise / COMPARING & 80 & 7 (8.8\%) & 240 & 159 (66.2\%) \\
+Mistral-7B & MEC / SCORING\_CODE & 160 & 0 & 480 & 9 (1.9\%) \\
+Mistral-7B & MEC / COMPARING & 160 & 27 (16.9\%) & 480 & 250 (52.1\%) \\
+Mistral-7B & noise / SCORING\_CODE & 80 & 0 & 240 & 1 (0.4\%) \\
+Mistral-7B & noise / COMPARING & 80 & 9 (11.2\%) & 240 & 116 (48.3\%) \\
+Qwen2.5-7B & MEC / SCORING\_CODE & 160 & 0 & 480 & 9 (1.9\%) \\
+Qwen2.5-7B & MEC / COMPARING & 160 & 0 & 480 & 0 \\
+Qwen2.5-7B & noise / SCORING\_CODE & 80 & 0 & 240 & 0 \\
+Qwen2.5-7B & noise / COMPARING & 80 & 0 & 240 & 0 \\
+\end{longtable}
+}
+
+Every arm that ran is listed, including Qwen2.5's four cells and the two noise cells an earlier
+draft omitted. Qwen2.5 has no VANILLA row because its temperature-0 arm was halted by PC-4 before
+producing any record, and Mistral-7B has none for the same reason.
+
+This changes how the MEC arms should be read. At record level Llama-3.1's MEC/SCORING\_CODE arm looks
+almost clean at 0.6\% unparseable; at generation level 24.2\% of its samples failed to parse, and the
+majority vote over k = 3 concealed that. Llama-3.1's and Mistral-7B's COMPARING arms fail on half to
+three quarters of individual generations. Only Qwen2.5 is clean at both levels. Any statement that
+``the MEC arms are clean'' holds at record level only, and we do not make it without that
+qualification.
+
+The 97.8\% figure needs explaining, because on its own it would imply that Llama-3.1 cannot score a
+pair of answers. It can. It emits a markdown label and then the two scores on the next line:
+
+\begin{verbatim}
+**Overall Scores:**
+8.5 9.0
+
+**Evaluation Explanation:**
+\end{verbatim}
+
+The registered parser requires the two scores on the first line, so it does not reach them. This is
+a limitation of our measurement rule meeting a formatting habit of the model, and both halves of
+that sentence matter.
+
+We did not change the registered parser. A secondary parser is declared in the deviations register, D-5, which
+records that its rule was chosen after the outputs were seen and that the recovered count was known
+before the rule was written. It skips leading lines that are only a markdown heading or emphasis
+label, then applies the unchanged regex to the first remaining non-empty line. Its skip rule is broader than a markdown label: the pattern matches any line of letters and spaces, so a
+short punctuation-free prose line is skipped too. Reviewer 1 on \#142 gave the example \texttt{Both\ were\ helpful\ overall} followed by \texttt{9\ 8}, which the released parser accepts; we reproduced it. In the 274
+records actually recovered the skipped labels were all \texttt{**Overall\ Scores:**} or \texttt{**Scores:**}, so
+the broader rule did not change the recovery count, and the guard is left as implemented rather
+than tightened after the fact.
+
+Under that secondary parser, 281 of 320 VANILLA records parse, recovering 274. The 313 strict
+failures therefore split into two groups rather than one: 274 follow the markdown-label pattern and
+are recovered, and the remaining 39 use other formats that the secondary rule does not reach and
+which we did not characterise further. Paired cells with
+both orders parsed go from 1 of 160 under the registered parser to 132 of 160 under the secondary
+one. Every figure from the secondary parser is exploratory in the sense of D-5 and is reported here
+beside its registered counterpart, never in place of it. And the recovery does not make this judge
+a clean one: Llama-3.1 remains above the registered 10\% PC-5 flag under both parsers, at 97.8\%
+unparseable under the registered rule and 12.2\% under the secondary rule, so it is reported as a
+high-unparseable judge either way.
+
+\subsection{4.4 The COMPARING template carries its declared confound}\label{the-comparing-template-carries-its-declared-confound}
+
+COMPARING shows elevated unparseable rates on two of the three judges that ran it. Qwen2.5 parsed all 160 of its COMPARING records with none unparseable. The elevated rates belong to
+the other two judges: 31.9\% and 8.8\% for
+Llama-3.1, 16.9\% and 11.2\% for Mistral-7B. The same judges on the authors' own released SCORING
+prompt sit at 0.6\% and 0.0\%.
+
+The pre-registration already declares our COMPARING prompt as a reconstruction, because the
+original prints it nowhere: not in the paper, which has no appendix, and not in the released code,
+which implements only the scoring prompt. The contrast above is consistent with the reconstruction
+being implicated in the parse failures, though Qwen2.5 parsed the same reconstruction perfectly, which
+points to an interaction between judge and template rather than to the template alone. We therefore report the COMPARING
+arm with that confound attached and draw no conclusion from it about judge behaviour.
+
+\subsection{4.5 What the surviving data supports}\label{what-the-surviving-data-supports}
+
+The MEC arms on the authors' own released prompt are clean AT RECORD LEVEL: 0.6\% unparseable for
+Llama-3.1 and 0.0\% for Mistral-7B. At sample level they are not, as 4.3 sets out: 24.2\% of
+Llama-3.1's individual generations on that arm failed to parse and the majority vote hid it. Quantities internal to the MEC arms are therefore computable, including the
+self-inconsistency rate from the identical-order noise control. Those results are reported in 4.6.
+
+What cannot be done is the comparison the study was built around. Every registered hypothesis
+contrasts something against VANILLA, and VANILLA is gone for two judges by the determinism control
+and effectively gone for the third by the parse rule.
+
+\subsection{4.6 Results from the surviving arms}\label{results-from-the-surviving-arms}
+
+Everything in this section is DESCRIPTIVE, including the H2 figures: they come from the registered
+test applied under a post-registration deviation to arms that are not the registered setting. Nothing here is a test of H1 or H3: both read from the temperature-0 VANILLA arm,
+which is halted for two judges and yields one contributing pair for the third. Computed by \texttt{analyze\_mec.py} from
+\texttt{results/verdicts\_*.json}.
+
+Accuracy and Cohen's kappa are against the 80 released human labels, whose marginals are ChatGPT 41,
+tie 14, Vicuna-13B 25. Kappa is reported with PABAK, and the matched-marginal chance agreement pe is printed by
+\texttt{analyze\_mec.py} for every cell though it is not carried in the table below, as
+the analysis plan requires.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lllllll@{}}
+\toprule\noalign{}
+judge & template & order & n & accuracy & kappa & PABAK \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & SCORING\_CODE & AB & 80 & 0.588 & 0.315 & 0.175 \\
+Llama-3.1-8B & SCORING\_CODE & BA & 79 & 0.557 & 0.249 & 0.114 \\
+Mistral-7B & SCORING\_CODE & AB & 80 & 0.537 & 0.181 & 0.075 \\
+Mistral-7B & SCORING\_CODE & BA & 80 & 0.525 & 0.221 & 0.050 \\
+Qwen2.5-7B & SCORING\_CODE & AB & 80 & 0.600 & 0.259 & 0.200 \\
+Qwen2.5-7B & SCORING\_CODE & BA & 80 & 0.512 & 0.226 & 0.025 \\
+\end{longtable}
+}
+
+Random-order MEC accuracy, computed by resampling the stored both-order verdicts as the
+pre-registration specifies in place of 100 fresh random-order runs. This is NOT the original's
+Balanced Position Calibration: BPC averages the numeric scores across both orders before deciding,
+and no BPC quantity was computed in this study (the deviations register, D-10). On SCORING\_CODE the figures are, each with a 95\% bracket from 1,000 draws over presentation
+orders, Llama-3.1 0.576
+{[}0.519, 0.633{]}, Mistral-7B 0.532 {[}0.463, 0.600{]} and Qwen2.5 0.556 {[}0.487, 0.625{]}. The original reports 53.2\% for MEC on its SCORING template with ChatGPT as evaluator, and all
+three of our open-weight judges land around or slightly above that figure. THIS IS A DESCRIPTIVE
+BENCHMARK, NOT A LIKE-FOR-LIKE REPLICATION, and not a confirmation that calibration recovers
+accuracy: our aggregation is a majority vote over three samples where the original averages
+numeric scores, our judges are open-weight and quantised where theirs was ChatGPT, and the arm
+these figures come from is not the one the registration named. An earlier version of this paper reported
+0.429, 0.419 and 0.456 and concluded that all three sat below the original; that comparison was an
+artefact of the frame error recorded in the deviations register, D-16, and it reverses.
+
+Conflict rate on the MEC arm, with the identical-order self-inconsistency rate from the noise
+control subtracted as section 4.2 of the pre-registration requires:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+judge
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+template
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+n
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+c
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+s
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+c - s
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+95\% CI
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & SCORING\_CODE & 79 & 0.316 & 0.278 & 0.038 & {[}-0.089, +0.165{]} \\
+Mistral-7B & SCORING\_CODE & 80 & 0.375 & 0.237 & 0.138 & {[}+0.000, +0.275{]} \\
+Qwen2.5-7B & SCORING\_CODE & 80 & 0.475 & 0.225 & 0.250 & {[}+0.100, +0.400{]} \\
+Llama-3.1-8B & COMPARING & 42 & 0.881 & 0.071 & 0.810 & {[}+0.667, +0.929{]} \\
+Mistral-7B & COMPARING & 55 & 0.018 & 0.018 & 0.000 & {[}-0.055, +0.055{]} \\
+Qwen2.5-7B & COMPARING & 80 & 0.287 & 0.075 & 0.212 & {[}+0.100, +0.325{]} \\
+\end{longtable}
+}
+
+Intervals are question-clustered bootstrap, 10,000 resamples, seed 1234, computed by
+\texttt{analyze\_mec.py} function \texttt{cs\_intervals}. n counts questions with both MEC orders parsed AND a
+parsed noise repeat, so it is smaller than the per-arm record counts; it is reported rather than
+left implicit. One of the three SCORING\_CODE intervals, Qwen2.5's {[}+0.100, +0.400{]}, strictly excludes zero.
+Mistral-7B's lower bound is exactly zero, so its interval does not exclude zero, and Llama-3.1's
+{[}-0.089, +0.165{]} includes it. Of the three COMPARING intervals, only Mistral-7B's {[}-0.055, +0.055{]} includes zero,
+while Llama-3.1's {[}+0.667, +0.929{]} and Qwen2.5's {[}+0.100, +0.325{]} exclude it. An earlier version of
+this paper said all three SCORING\_CODE intervals excluded zero and that both COMPARING intervals
+included it; both statements were wrong, and the second miscounted the rows as well.
+
+What c - s supports, and what it does not. The quantity c - s is the pre-registered operational
+measure of order dependence, so on the SCORING\_CODE template we can say that these judges' verdicts
+change with presentation order beyond their own same-order noise by 0.038, 0.138 and 0.250 on the
+scoring template, with Llama-3.1's interval including zero. That is a
+descriptive statement about the MEC arm. It is not a test of H1, which is registered on the halted
+temperature-0 arm.
+
+The accuracy gap between presentation orders is small on the scoring template once the frame error
+is corrected: 0.588 against 0.557 for Llama-3.1, 0.537 against 0.525 for Mistral-7B, 0.600 against
+0.512 for Qwen2.5. An earlier version of this paper reported gaps of around 0.3 and built an
+argument about an unexplained order-dependent asymmetry on them. Those gaps were an artefact of our
+own analysis error and that argument is withdrawn; the deviations register, D-16 gives the detail.
+
+An earlier version of this paper said the H2 figures were unaffected by that correction because
+they were slot-frame quantities. THAT WAS FALSE and is withdrawn: two analysis functions each
+carried their own order-conditional remap, so the H2 table and the content-blind shares were wrong
+in every row. The deviations register records it at D-18, and the figures below are the corrected ones.
+
+\subsubsection{Content-blind benchmark (exploratory, added after the results were seen; not registered)}\label{content-blind-benchmark-exploratory-added-after-the-results-were-seen-not-registered}
+
+A judge that ignored the answers entirely and chose by slot alone would still show an accuracy gap
+between the two orders, purely because the human labels are not symmetric across slots. This table
+asks how much of each cell's observed gap such a content-blind judge would reproduce, using that
+judge's own slot and tie shares.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1250}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+judge
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+template
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+order
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p(slot 1)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p(slot 2)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p(tie)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+observed gap
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+content-blind gap
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & SCORING\_CODE & AB & 0.425 & 0.575 & 0.000 & +0.031 & -0.013 \\
+Llama-3.1-8B & SCORING\_CODE & BA & 0.506 & 0.494 & 0.000 & & \\
+Llama-3.1-8B & COMPARING & AB & 0.982 & 0.018 & 0.000 & +0.121 & +0.165 \\
+Llama-3.1-8B & COMPARING & BA & 0.925 & 0.075 & 0.000 & & \\
+Mistral-7B & SCORING\_CODE & AB & 0.613 & 0.388 & 0.000 & +0.012 & +0.045 \\
+Mistral-7B & SCORING\_CODE & BA & 0.613 & 0.388 & 0.000 & & \\
+Mistral-7B & COMPARING & AB & 0.015 & 0.000 & 0.985 & +0.040 & +0.026 \\
+Mistral-7B & COMPARING & BA & 0.015 & 0.000 & 0.985 & & \\
+Qwen2.5-7B & SCORING\_CODE & AB & 0.738 & 0.263 & 0.000 & +0.088 & +0.090 \\
+Qwen2.5-7B & SCORING\_CODE & BA & 0.713 & 0.287 & 0.000 & & \\
+Qwen2.5-7B & COMPARING & AB & 0.237 & 0.037 & 0.725 & -0.025 & -0.013 \\
+Qwen2.5-7B & COMPARING & BA & 0.163 & 0.225 & 0.613 & & \\
+\end{longtable}
+}
+
+The content-blind prediction is computed on the SAME parsed questions as the observed figure
+beside it. An earlier version drew the human label marginals from all 80 registered questions
+while observing on parsed records only, so the two sides of each comparison rested on different
+question sets wherever a cell had unparsed records; three of the six cells changed when that was
+corrected. The deviations register records it.
+
+Gaps are per template, not per order, so they appear once on each pair of rows. There is
+deliberately NO ``fraction of the gap reproduced'' column: after the frame correction several observed
+gaps are close to zero, Mistral-7B's on SCORING\_CODE is 0.012, and a ratio of two near-zero numbers
+is numerically unstable and tells a reader nothing. Both gaps are printed in the same units, so a
+reader who wants the ratio can form it and will see how little it rests on.
+
+The figure that matters most here is Mistral-7B on SCORING\_CODE: p(slot 1) is 0.613 in BOTH orders.
+That is a stable preference for the first slot, invariant to which candidate occupies it, and it was
+invisible before the frame correction in the deviations register, D-18, because the earlier analysis re-flipped
+the BA records and made the two orders look like mirror images. Qwen2.5's content-blind gap on
+SCORING\_CODE, +0.090 against an observed +0.088, is the one cell where slot shares alone account for
+essentially the whole observed gap.
+
+This table is exploratory. It was not registered, it was added after the results were seen, and no
+mechanism is claimed from it.
+
+These judges almost never emit a tie on the SCORING\_CODE template, while the human labels tie on 14 of
+80 questions. That caps achievable accuracy at roughly 0.825 before order enters, and it accounts
+for part of the distance between our numbers and the original's.
+
+Verdict distribution per judge and template, over parsed verdicts, so a reader can see when a
+conflict rate is carrying information and when it is not:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lllllll@{}}
+\toprule\noalign{}
+judge & template & n & slot 1 (``A'') & slot 2 (``B'') & tie & \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & SCORING\_CODE & 159 & 46.5\% & 53.5\% & 0.0\% & \\
+Llama-3.1-8B & COMPARING & 109 & 95.4\% & 4.6\% & 0.0\% & near-constant \\
+Mistral-7B & SCORING\_CODE & 160 & 61.3\% & 38.8\% & 0.0\% & \\
+Mistral-7B & COMPARING & 133 & 1.5\% & 0.0\% & 98.5\% & near-constant \\
+Qwen2.5-7B & SCORING\_CODE & 160 & 72.5\% & 27.5\% & 0.0\% & \\
+Qwen2.5-7B & COMPARING & 160 & 20.0\% & 13.1\% & 66.9\% & \\
+\end{longtable}
+}
+
+Two cells are flagged near-constant. The flag marks any cell where one verdict category exceeds 90\%
+of parsed verdicts, and that 90\% threshold was chosen by us after seeing these data; it is a
+reporting flag and not a pre-registered rule, which is why the raw shares are printed above so a
+reader can apply any threshold they prefer. See the deviations register, D-7.
+
+For the two flagged cells we still print the conflict rates. Only ONE of them should be read as
+uninformative, and the distinction is worth stating because it is not obvious: near-constant output
+drives the conflict rate in opposite directions depending on WHICH verdict is constant. Mistral-7B
+returns a tie on 98.5\% of its parsed COMPARING items, and a constant tie cannot flip when the
+candidates swap, so its conflict rate c = 0.018 is near zero for an arithmetic reason and carries no
+information about order sensitivity. Llama-3.1 returns the FIRST SLOT on 95.4\% of its parsed items,
+and a constant slot choice flips the candidate every time the order swaps, so its conflict rate
+c = 0.881 is near its maximum for the same arithmetic reason - and that is an informative position
+effect, not an artefact. The figures are those in the c - s table above,
+on the single common-set definition used throughout: Llama-3.1 COMPARING c = 0.881, s = 0.071,
+c - s = 0.810 on n = 42; Mistral-7B COMPARING c = 0.018, s = 0.018, c - s = 0.000 on n = 55.
+Earlier drafts carried a second pair of values for these cells computed over each quantity's own
+available set; the common-set definition is now used everywhere and its denominator is stated. Mistral-7B's net order-dependence c - s of 0.000, with a conflict rate c of 0.018, follows from
+returning a tie on 98.5\% of parsed items. It is not evidence that the judge is
+unaffected by presentation order, and it must not be read that way.
+
+The pre-registration has an interpretation rule for the opposite failure, a judge whose
+self-inconsistency approaches its conflict rate. It has no rule for a judge that answers almost
+identically on every item, and we have not invented one.
+
+\subsubsection{H2, as computed under the D-8 deviation (descriptive)}\label{h2-as-computed-under-the-d-8-deviation-descriptive}
+
+Signed first-position minus second-position win rate, per judge, on every surviving both-order arm.
+Intervals are at the Holm most-stringent level, 1 - 0.05/3 = 98.33\%, for the reason given in the
+D-8 amendment. Computed by \texttt{analyze\_mec.py} function \texttt{h2}, reproduced from the results files.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+judge
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+arm
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+signed difference
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+98.33\% interval
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+n records
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+excluded unparsed
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+questions dropped
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Llama-3.1-8B & SCORING\_CODE & -0.063 & {[}-0.215, +0.089{]} & 158 & 1 & 1 \\
+Mistral-7B & SCORING\_CODE & +0.225 & {[}+0.075, +0.375{]} & 160 & 0 & 0 \\
+Qwen2.5-7B & SCORING\_CODE & +0.450 & {[}+0.312, +0.588{]} & 160 & 0 & 0 \\
+Llama-3.1-8B & COMPARING & +0.884 & {[}+0.767, +0.977{]} & 86 & 51 & 23 \\
+Mistral-7B & COMPARING & +0.017 & {[}+0.000, +0.069{]} & 116 & 27 & 17 \\
+Qwen2.5-7B & COMPARING & +0.069 & {[}-0.013, +0.156{]} & 160 & 0 & 0 \\
+\end{longtable}
+}
+
+The registered decision rule asks whether any two judges differ in SIGN with NON-OVERLAPPING
+intervals. Every pair, on both arms:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lllll@{}}
+\toprule\noalign{}
+arm & pair & opposite sign & non-overlapping & qualifies \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SCORING\_CODE & Llama-3.1 vs Mistral-7B & yes & no & no \\
+SCORING\_CODE & Llama-3.1 vs Qwen2.5 & yes & \textbf{yes} & \textbf{yes} \\
+SCORING\_CODE & Mistral-7B vs Qwen2.5 & no & no & no \\
+COMPARING & Llama-3.1 vs Mistral-7B & no & yes & no \\
+COMPARING & Llama-3.1 vs Qwen2.5 & no & yes & no \\
+COMPARING & Mistral-7B vs Qwen2.5 & no & no & no \\
+\end{longtable}
+}
+
+Each complete pair contributes two records, so n records is twice the number of contributing
+questions: 158 records is 79 questions for Llama-3.1 on SCORING\_CODE, 86 is 43 questions for its
+COMPARING cell. Questions dropped are those where only one presentation order parsed, which the
+registration excludes from a paired test.
+
+On SCORING\_CODE one pair qualifies: Llama-3.1 leans toward the second slot (-0.063) and Qwen2.5
+toward the first (+0.450), and their intervals do not overlap. That is the criterion H2's registered
+test names. On COMPARING no pair qualifies, because all three judges lean the same way.
+
+WHAT THIS IS AND IS NOT. It is NOT a confirmation of H2. H2 is not evaluable as registered: the
+registered claim is scoped to the Table 1 temperature-0 arm, which produced no analysable data, and
+that is unchanged. What the table shows is a descriptive result on arms the registration did not
+name, computed under a post-registration deviation, on judges whose temperature-0 determinism we
+could not establish.
+
+Two further reasons for caution, both of which weigh against us. First, an earlier version of this
+paper reported the opposite outcome on this arm, because the analysis was wrong; this result exists
+only because referees found that error, and it arrived in our favour, which is a reason for more
+scrutiny rather than less. Second, the surviving arms use Multiple Evidence Calibration, the
+original's own remedy for positional bias, so they are a weak setting in which to learn anything
+about a claim made on the uncalibrated template.
+
+One reading in an earlier version also falls. Llama-3.1's COMPARING cell was described as
+``uninformative because the output is near-constant''. Its corrected signed slot share is +0.884 with
+an interval of {[}+0.767, +0.977{]}. A judge that selects the first slot on almost every item is not
+uninformative about slot position; it carries the strongest slot-position signal in this study. The
+D-7's near-constant flag applies to the OUTPUT of both cells, but its uninformativeness
+conclusion holds only for Mistral-7B, whose constant verdict is a tie and whose conflict rate is
+therefore near zero by arithmetic. Llama-3.1's constant verdict is a SLOT, so a swap flips the
+candidate every time and its conflict rate of 0.881 sits near its maximum for the same arithmetic
+reason. Both its conflict rate and its slot share of +0.884 measure one real position effect, and
+nothing about Llama-3.1's COMPARING cell is uninformative.
+
+The pre-specified score-gap analysis (C-3) is not reported here. It needs the scoring template's
+numeric scores, and the registered binning was specified for the VANILLA arm.
+
+\subsection{4.7 One operational loss, disclosed}\label{one-operational-loss-disclosed}
+
+Qwen2.5-7B-Instruct's MEC arm was executed twice. The first execution completed and its output was
+then destroyed by an output-path collision in our own harness; the arm was re-executed and the
+re-execution is the data of record. The loss, what can and cannot be cross-checked, and the fix are
+recorded in the deviations register, D-6.
+
+\section{5 Discussion}\label{discussion}
+
+What we can conclude. On two of these three locally served judges, Qwen2.5-7B and Mistral-7B, a
+temperature-0 setting did not guarantee identical output. Llama-3.1-8B PASSED the determinism
+control on all ten checked prompts, so the failure is not a property of every open-weight judge we
+tried. That PASS is a statement about those ten prompts on an immediate repeat, not about the 320
+prompts in the arm: nothing here establishes determinism beyond the sampled checks, and the
+exploratory twenty-prompt re-test on a different judge found 15\% mismatches. The rest of this
+sentence continues:
+tried, and we do not present it as one. Where it does occur, a conflict rate computed without a
+determinism check cannot separate run-to-run variation from order dependence. A pre-declared re-test under serial requests, run on the
+one judge that failed first, found the non-determinism persisted under the one controlled condition we tested, serial requests to a server we intended to be otherwise idle with the model resident, conditions the re-test script records but does not verify, which is narrower than ``contention removed'' in general, so we do
+not attribute it to load. We do not offer a replacement mechanism: identifying one would need
+instrumentation below the inference server, which this study does not have.
+
+One limit on what the surviving arms could ever have shown about H2. They use Multiple Evidence
+Calibration, which is the original's own remedy for positional bias. A result on a calibrated arm is weak evidence about a claim the original made on the uncalibrated
+Table 1 template, whatever the interval around it, and that holds whichever way the result points. That is a reason to treat the H2 figures in 4.6 as descriptive, independent of
+their width.
+
+What we cannot conclude. We make no claim about the original's numbers. Its judges were different
+models served differently, and three local models on one machine cannot speak to them. We also make
+no claim about positional bias as such. On the temperature-1 arms verdicts did change with presentation order beyond each judge's own
+same-order noise, though by less than an earlier version of this paper claimed: by 0.038, 0.138
+and 0.250 on the scoring template, with one interval including zero, and most strongly by 0.810
+on the reconstructed COMPARING prompt. We report those descriptively; but the registered test of position dependence was
+specified on an arm that did not survive, and we attach no mechanism to the accuracy asymmetry we
+observed, for reasons given in 4.6.
+
+What a practitioner should take from it. If you intend to use an open-weight judge and rely on
+temperature 0 for reproducibility, verify that assumption on your own stack before you build on it,
+because it did not hold for two of our three judges. If you intend to parse a judge's output with a
+strict format rule, measure the compliance rate first: the registered parser could not reach the
+scores for 313 of one judge's 320 VANILLA records. Those 313 split into 274 that place the scores one
+line down behind a markdown label, and 39 in other formats we did not characterise. We did not
+assess whether any of those scores were substantively correct, only whether the registered rule
+could read them.
+
+Limitations. Three judges on one machine. The COMPARING arm rests on a reconstructed prompt.
+Two COMPARING cells show near-constant output, and that cuts two ways: Mistral-7B's constant
+verdict is a tie, so its conflict rate is near zero by arithmetic and uninformative, while
+Llama-3.1's constant verdict is a slot, so its conflict rate is near its maximum for the same
+reason and measures a real position effect. One judge's
+MEC arm was executed twice after we destroyed the first execution's output through a filename
+collision in our own harness, and the two executions cannot be compared record by record. The MEC
+arm runs at temperature 1 with k = 3 samples per record, so two executions of it are not expected to
+agree verdict for verdict even on a perfectly deterministic stack. All of these are
+in the deviations register.
+
+On contacting the original authors. We did not contact them. This replication therefore rests
+entirely on the published article and the released repository, and a reader should weigh it on
+that basis. We make no claim here about what the venue requires on this point.
+
+\section{6 Code and data availability}\label{code-and-data-availability}
+
+Our code and results are released in the project repository at https://github.com/dosvk/faireval-openweight-replication, archived at a Zenodo DOI obtained on acceptance, under the MIT licence required by section 9
+of the registration. Released: the harness, the input verifier, the analysis scripts,
+the secondary parser, the determinism re-test, the stale-claim sweep and the build script; the
+per-judge verdict files with every individual sample and its raw text, with verbatim spans of
+the original benchmark's questions and answers redacted (see the data section of the
+registration, and the deviations register); the determinism re-test
+output; and the dated deviations register itself, as \texttt{DEVIATIONS.md} in the repository: it is released
+rather than reproduced in this article, so that every deviation stays recorded in full while
+the article keeps to the length of a ReScience C replication.
+
+NOT released: the question set, candidate answers and human labels. Those come from the original
+authors' repository, which carries no licence file, so we redistribute none of them. The input verifier checks them at a pinned commit and checks SHA-256 and byte length for all six files it
+pins before any run proceeds; five are consumed by the arms that ran. A consequence worth stating:
+if that upstream repository is deleted or rewritten, our artefact cannot be rehydrated from it, and
+the verifier will refuse to run rather than proceed on different bytes.
+
+Also not released: the model weights, which are third-party. Inference ran locally through Ollama
+0.30.8 on an Apple M4 Pro with 48 GB of unified memory. No paid API was used.
+
+One reproducibility limitation, stated rather than left to be discovered. The registration
+committed to recording each arm's model digest in the results artefact before its run. That did not
+happen: the artefacts carry the model name and tag but no digest field. The digests appear in
+the deviations register and in section 3.2, but they were read from the local model store after the runs, so a
+reader cannot confirm from an artefact alone which weights produced it.
+
+Expect to reproduce the pipeline and the controls. Do not expect byte-identical verdicts: section
+4.2 reports that two of three judges failed a temperature-0 determinism check, so verdict-level
+agreement is a thing this paper measures rather than a precondition it relies on.
+
+\section{Deviations from the registered plan}\label{deviations-from-the-registered-plan}
+
+Every departure from the pre-registered plan is recorded, with its date and its
+reasoning, in \texttt{DEVIATIONS.md} in the project repository released with this article
+(see Code and data availability). The register is the authoritative record: it
+holds each deviation in full, including those that correct earlier entries of its
+own, with the original wording left intact beside every correction. It is kept in
+the repository rather than inlined here so that this article stays close to the
+length of a ReScience C replication while the record itself remains complete and
+auditable.

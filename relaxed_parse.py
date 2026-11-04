@@ -8,7 +8,10 @@ The rule, deliberately narrow and nothing broader (a documented review decision)
   - skip leading lines that consist ONLY of a markdown heading or emphasis label
     (e.g. '**Overall Scores:**', '## Scores')
   - then apply the UNCHANGED SCORE_LINE to the FIRST REMAINING non-empty line
-  - do NOT skip bullets, prose, or any other kind of line
+  - the skip pattern is LABEL_ONLY, which matches any line of letters and spaces, so it ALSO
+    skips a short punctuation-free prose line such as 'Both were helpful overall'. Bullets,
+    and any line containing punctuation, are NOT skipped. Reviewer 1 on ReScience #142
+    identified this; the earlier wording here claimed no prose was skipped, which was false.
   - applied ONLY where the SCORING template is used
 
 The rule was chosen after seeing the outputs, and the recovered count was known before it was
@@ -28,6 +31,12 @@ SCORE_LINE = rr.SCORE_LINE          # imported unchanged, not redefined
 
 # A line that is ONLY a markdown heading or emphasis label. No digits, no sentence punctuation,
 # no bullet markers: '- x' and '* x' both fail because of the space after the marker.
+# RULE AS IMPLEMENTED (corrected after Reviewer 1, #142, 2026-11-04): LABEL_ONLY matches any
+# line of letters and spaces, so it skips a short punctuation-free PROSE line as well as a
+# markdown label - e.g. "Both were helpful overall" followed by "9 8" is accepted. Earlier text
+# said it skipped "not bullets, not prose", which was wrong. In the 274 records recovered the
+# skipped labels were all **Overall Scores:** or **Scores:**, so the broader rule did not change
+# the count; the guard is left as implemented rather than tightened after the fact.
 LABEL_ONLY = re.compile(
     r"^\s*(?:#{1,6}\s*)?(?:\*{1,3}|_{1,3})?[A-Za-z][A-Za-z ]*:?\s*(?:\*{1,3}|_{1,3})?\s*$"
 )
@@ -60,7 +69,10 @@ if __name__ == "__main__":
         ("9 8", ("A", True), "bare scores, same as registered"),
         ("- Assistant 1 is better\n9 8", (None, False), "BULLET must not be skipped"),
         ("* Assistant 2 wins\n8 9", (None, False), "bullet with asterisk must not be skipped"),
-        ("Both were helpful overall.\n9 8", (None, False), "PROSE must not be skipped"),
+        ("Both were helpful overall.\n9 8", (None, False),
+         "prose WITH punctuation is not skipped; LABEL_ONLY needs letters and spaces only"),
+        ("Both were helpful overall\n9 8", ("A", True),
+         "prose WITHOUT punctuation IS skipped: the implemented rule, reviewer 1 #142"),
         ("I cannot score these.", (None, False), "no scores at all"),
         ("", (None, False), "empty"),
     ]
